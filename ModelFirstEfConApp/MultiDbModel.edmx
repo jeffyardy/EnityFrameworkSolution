@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MultiDbModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="MultiDbModelStoreContainer">
+    <EntitySet Name="Members" EntityType="MultiDbModel.Store.Members" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Games" EntityType="MultiDbModel.Store.Games" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MemberGame" EntityType="MultiDbModel.Store.MemberGame" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="FK_MemberGame_Member" Association="MultiDbModel.Store.FK_MemberGame_Member">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="MemberGame" EntitySet="MemberGame" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MemberGame_Game" Association="MultiDbModel.Store.FK_MemberGame_Game">
+      <End Role="Game" EntitySet="Games" />
+      <End Role="MemberGame" EntitySet="MemberGame" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Members">
+    <Key>
+      <PropertyRef Name="MemberId" />
+    </Key>
+    <Property Name="MemberId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MemberName" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Games">
+    <Key>
+      <PropertyRef Name="GameId" />
+    </Key>
+    <Property Name="GameId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="GameName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Fees" Type="decimal" Nullable="false" />
+  </EntityType>
+  <EntityType Name="MemberGame">
+    <Key>
+      <PropertyRef Name="Members_MemberId" />
+      <PropertyRef Name="Games_GameId" />
+    </Key>
+    <Property Name="Members_MemberId" Type="int" Nullable="false" />
+    <Property Name="Games_GameId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_MemberGame_Member">
+    <End Role="Member" Type="MultiDbModel.Store.Members" Multiplicity="1" />
+    <End Role="MemberGame" Type="MultiDbModel.Store.MemberGame" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="MemberGame">
+        <PropertyRef Name="Members_MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MemberGame_Game">
+    <End Role="MemberGame" Type="MultiDbModel.Store.MemberGame" Multiplicity="*" />
+    <End Role="Game" Type="MultiDbModel.Store.Games" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Game">
+        <PropertyRef Name="GameId" />
+      </Principal>
+      <Dependent Role="MemberGame">
+        <PropertyRef Name="Games_GameId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="MultiDbModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="MultiDbModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Members" EntityType="MultiDbModel.Member" />
+          <EntitySet Name="Games" EntityType="MultiDbModel.Game" />
+          <AssociationSet Name="MemberGame" Association="MultiDbModel.MemberGame">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="Game" EntitySet="Games" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="MemberId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberName" Type="String" Nullable="false" />
+          <NavigationProperty Name="Games" Relationship="MultiDbModel.MemberGame" FromRole="Member" ToRole="Game" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="GameId" />
+          </Key>
+          <Property Name="GameId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GameName" Type="String" Nullable="false" />
+          <Property Name="Fees" Type="Decimal" Nullable="false" />
+          <NavigationProperty Name="Members" Relationship="MultiDbModel.MemberGame" FromRole="Game" ToRole="Member" />
+        </EntityType>
+        <Association Name="MemberGame">
+          <End Type="MultiDbModel.Member" Role="Member" Multiplicity="*" />
+          <End Type="MultiDbModel.Game" Role="Game" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MultiDbModelStoreContainer" CdmEntityContainer="MultiDbModelContainer">
+    <EntitySetMapping Name="Members">
+      <EntityTypeMapping TypeName="IsTypeOf(MultiDbModel.Member)">
+        <MappingFragment StoreEntitySet="Members">
+          <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+          <ScalarProperty Name="MemberName" ColumnName="MemberName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Games">
+      <EntityTypeMapping TypeName="IsTypeOf(MultiDbModel.Game)">
+        <MappingFragment StoreEntitySet="Games">
+          <ScalarProperty Name="GameId" ColumnName="GameId" />
+          <ScalarProperty Name="GameName" ColumnName="GameName" />
+          <ScalarProperty Name="Fees" ColumnName="Fees" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="MemberGame" TypeName="MultiDbModel.MemberGame" StoreEntitySet="MemberGame">
+      <EndProperty Name="Member">
+        <ScalarProperty Name="MemberId" ColumnName="Members_MemberId" />
+      </EndProperty>
+      <EndProperty Name="Game">
+        <ScalarProperty Name="GameId" ColumnName="Games_GameId" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
